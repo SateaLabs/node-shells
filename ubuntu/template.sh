@@ -57,18 +57,13 @@ function checkPackages() {
     done
 }
 
-function init() {
-    echo "init ..."
-    # 按需添加脚本
-}
-
 function install() {
-    checkVars
     # 按需添加脚本
 }
 
 function start() {
     echo "start ..."
+    checkVars
     # 按需添加脚本
 }
 
@@ -123,9 +118,6 @@ case $1 in
 check-packages)
     checkPackages
     ;;
-init)
-    init
-    ;;
 install)
     if [ "$2" = "--auto" ]; then
         #这里使用自动模式下的 安装 函数
@@ -170,7 +162,6 @@ logs)
     echo "Flag:
   check-packages       Check basic installation package
   install              Install $projectName environment
-  init                 Install Dependent packages
   start                Start the $projectName service
   stop                 Stop the $projectName service
   upgrade              Upgrade an existing installation of $projectName

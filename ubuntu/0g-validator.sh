@@ -59,26 +59,20 @@ function checkPackages() {
     done
 }
 
-function init() {
-    echo "init ..."
-    mkdir -p /$HOME/satea/$projectName/data
-    # 按需添加脚本
+function install() {
+    echo "install ..."
     if ! check_go_installation; then
         curl -L https://go.dev/dl/go1.22.0.linux-amd64.tar.gz | tar -xzf - -C /usr/local
         echo 'export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin' >>$HOME/.bash_profile
         . $HOME/.bash_profile
         go version
     fi
-}
-
-function install() {
-    echo "install ..."
-    checkVars
     # 按需添加脚本
 }
 
 function start() {
     echo "start ..."
+    checkVars
     # 按需添加脚本
 }
 
@@ -179,7 +173,6 @@ logs)
     echo "Flag:
   check-packages       Check basic installation package
   install              Install $projectName environment
-  init                 Install Dependent packages
   start                Start the $projectName service
   stop                 Stop the $projectName service
   upgrade              Upgrade an existing installation of $projectName
