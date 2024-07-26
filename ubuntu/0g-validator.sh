@@ -2,11 +2,15 @@
 
 # 变量初始化
 projectName=${PRJECT_NAME-"0g-validator"}
+workDir="$HOME/satea/$projectName"
 dataDir="$HOME/satea/$projectName/data"
 moniker=${MONIKER-""}
 walletName=${WALLET_NAME-"wallet"}
 
 ALL_SATEA_VARS=("projectName" "moniker" "walletName")
+
+mkdir -p $dataDir
+cd $workDir
 
 # 定义要检查的包列表
 packages=(
@@ -61,7 +65,7 @@ function init() {
     # 按需添加脚本
     if ! check_go_installation; then
         curl -L https://go.dev/dl/go1.22.0.linux-amd64.tar.gz | tar -xzf - -C /usr/local
-        echo 'export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin' >> $HOME/.bash_profile
+        echo 'export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin' >>$HOME/.bash_profile
         . $HOME/.bash_profile
         go version
     fi
@@ -101,6 +105,9 @@ function clean() {
 function logs() {
     echo "logs ...."
     # 按需添加脚本
+    #..........
+    ########清理数据#########
+    rm -rf $workDir
 }
 
 function About() {

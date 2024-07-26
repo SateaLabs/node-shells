@@ -1,12 +1,11 @@
 #!/bin/bash
 
 # 变量初始化
-projectName=${PRJECT_NAME-"0g-validator"}
+projectName=${PRJECT_NAME-""}
+workDir="$HOME/satea/$projectName"
 dataDir="$HOME/satea/$projectName/data"
-moniker=${MONIKER-""}
-walletName=${WALLET_NAME-"wallet"}
 
-ALL_SATEA_VARS=("projectName" "moniker" "walletName")
+ALL_SATEA_VARS=("projectName")
 
 # 定义要检查的包列表
 packages=(
@@ -57,13 +56,10 @@ function checkPackages() {
 
 function init() {
     echo "init ..."
-    mkdir -p /$HOME/satea/$projectName/data
     # 按需添加脚本
-    
 }
 
 function install() {
-    echo "install ..."
     checkVars
     # 按需添加脚本
 }
@@ -88,9 +84,13 @@ function check() {
     # 按需添加脚本
 }
 
-function clean() {
-    echo "clean ..."
+
+function logs() {
+    echo "logs ...."
     # 按需添加脚本
+    #..........
+    ########清理数据#########
+    rm -rf $workDir
 }
 
 function logs() {
