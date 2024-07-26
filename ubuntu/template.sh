@@ -7,6 +7,9 @@ dataDir="$HOME/satea/$projectName/data"
 
 ALL_SATEA_VARS=("projectName")
 
+mkdir -p $dataDir
+cd $workDir
+
 # 定义要检查的包列表
 packages=(
     jq
@@ -85,8 +88,8 @@ function check() {
 }
 
 
-function logs() {
-    echo "logs ...."
+function clean() {
+    echo "clean ...."
     # 按需添加脚本
     #..........
     ########清理数据#########
@@ -137,27 +140,27 @@ install)
     ;;
 start)
     #创建启动节点的函数
-
+    start
     ;;
 stop)
     #创建停止节点的函数
-
+    stop
     ;;
 upgrade)
     #创建升级节点的函数
-
+    upgrade
     ;;
 check)
     #创建一些用于检查节点的函数
-
+    check
     ;;
 clean)
     #创建清除节点的函数
-
+    clean
     ;;
 logs)
     #打印节点信息
-
+    logs
     ;;
 
 **)
