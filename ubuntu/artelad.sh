@@ -1,16 +1,13 @@
 #!/bin/bash
 
 # 变量初始化
-projectName=${PRJECT_NAME-""}
-workDir="$HOME/satea/$projectName"
+projectName="artela"
+workDir="$HOME/satea"
 dataDir="$HOME/satea/$projectName/data"
 moniker=${MONIKER-""}
 walletName=${WALLET_NAME-""}
-ALL_SATEA_VARS=("projectName" "moniker" "walletName")
-
-mkdir -p $dataDir
-cd $workDir
-
+ALL_SATEA_VARS=("moniker" "walletName")
+mkdir $workDir
 # 定义要检查的包列表
 packages=(
     jq
@@ -59,7 +56,11 @@ function checkPackages() {
 }
 
 function install() {
+    cd $workDir
+    mkdir data
+    pwd
     git clone https://github.com/artela-network/artela
+    cd artela
     git checkout v0.4.7-rc7-fix-execution 
     make install
     wget https://github.com/artela-network/artela/releases/download/v0.4.7-rc7-fix-execution/artelad_0.4.7_rc7_fix_execution_Linux_amd64.tar.gz
@@ -67,33 +68,34 @@ function install() {
     mkdir libs
     mv $workDir/artela/libaspect_wasm_instrument.so $workDir/artela/libs/
     mv $workDir/artela/artelad /usr/local/bin/
-    echo 'export LD_LIBRARY_PATH=$HOME/libs:$LD_LIBRARY_PATH' >> $HOME/.bash_profile
+    echo 'export LD_LIBRARY_PATH=$workDir/artela/libs:$LD_LIBRARY_PATH' >> $HOME/.bash_profile
     . $HOME/.bash_profile
     artelad config chain-id artela_11822-1
     artelad init "$moniker" --chain-id artela_11822-1
     artelad config node tcp://localhost:3457
-    curl -L https://snapshots.dadunode.com/artela/genesis.json > $projectName/.artelad/config/genesis.json
-    curl -L https://snapshots.dadunode.com/artela/addrbook.json > $projectName/.artelad/config/addrbook.json
+    curl -L https://snapshots.dadunode.com/artela/genesis.json > $HOME/.artelad/config/genesis.json
+    curl -L https://snapshots.dadunode.com/artela/addrbook.json > $HOME/.artelad/config/addrbook.json
     SEEDS=""
     PEERS="ca8bce647088a12bc030971fbcce88ea7ffdac50@84.247.153.99:26656,a3501b87757ad6515d73e99c6d60987130b74185@85.239.235.104:3456,2c62fb73027022e0e4dcbdb5b54a9b9219c9b0c1@51.255.228.103:26687,fbe01325237dc6338c90ddee0134f3af0378141b@158.220.88.66:3456,fde2881b06a44246a893f37ecb710020e8b973d1@158.220.84.64:3456,12d057b98ecf7a24d0979c0fba2f341d28973005@116.202.162.188:10656,9e2fbfc4b32a1b013e53f3fc9b45638f4cddee36@47.254.66.177:26656,92d95c7133275573af25a2454283ebf26966b188@167.235.178.134:27856,2dd98f91eaea966b023edbc88aa23c7dfa1f733a@158.220.99.30:26680"
-    sed -i 's|^persistent_peers *=.*|persistent_peers = "'$PEERS'"|' $projectName/.artelad/config/config.toml
-    sed -i -e "s/^pruning *=.*/pruning = \"custom\"/" $projectName/.artelad/config/app.toml
-    sed -i -e "s/^pruning-keep-recent *=.*/pruning-keep-recent = \"100\"/" $projectName/.artelad/config/app.toml
-    sed -i -e "s/^pruning-keep-every *=.*/pruning-keep-every = \"0\"/" $projectName/.artelad/config/app.toml
-    sed -i -e "s/^pruning-interval *=.*/pruning-interval = \"10\"/" $projectName/.artelad/config/app.toml
-    sed -i -e 's/max_num_inbound_peers = 40/max_num_inbound_peers = 100/' -e 's/max_num_outbound_peers = 10/max_num_outbound_peers = 100/' $projectName/.artelad/config/config.toml
+    sed -i 's|^persistent_peers *=.*|persistent_peers = "'$PEERS'"|' $HOME/.artelad/config/config.toml
+    sed -i -e "s/^pruning *=.*/pruning = \"custom\"/" $HOME/.artelad/config/app.toml
+    sed -i -e "s/^pruning-keep-recent *=.*/pruning-keep-recent = \"100\"/" $HOME/.artelad/config/app.toml
+    sed -i -e "s/^pruning-keep-every *=.*/pruning-keep-every = \"0\"/" $HOME/.artelad/config/app.toml
+    sed -i -e "s/^pruning-interval *=.*/pruning-interval = \"10\"/" $HOME/.artelad/config/app.toml
+    sed -i -e 's/max_num_inbound_peers = 40/max_num_inbound_peers = 100/' -e 's/max_num_outbound_peers = 10/max_num_outbound_peers = 100/' $HOME/.artelad/config/config.toml
 
     node_address="tcp://localhost:3457"
-    sed -i -e "s%^proxy_app = \"tcp://127.0.0.1:26658\"%proxy_app = \"tcp://127.0.0.1:3458\"%; s%^laddr = \"tcp://127.0.0.1:26657\"%laddr = \"tcp://127.0.0.1:3457\"%; s%^pprof_laddr = \"localhost:6060\"%pprof_laddr = \"localhost:3460\"%; s%^laddr = \"tcp://0.0.0.0:26656\"%laddr = \"tcp://0.0.0.0:3456\"%; s%^prometheus_listen_addr = \":26660\"%prometheus_listen_addr = \":3466\"%" $projectName/.artelad/config/config.toml
-    sed -i -e "s%^address = \"tcp://localhost:1317\"%address = \"tcp://0.0.0.0:3417\"%; s%^address = \":8080\"%address = \":3480\"%; s%^address = \"localhost:9090\"%address = \"0.0.0.0:3490\"%; s%^address = \"localhost:9091\"%address = \"0.0.0.0:3491\"%; s%:8545%:3445%; s%:8546%:3446%; s%:6065%:3465%" $projectName/.artelad/config/app.toml
+    sed -i -e "s%^proxy_app = \"tcp://127.0.0.1:26658\"%proxy_app = \"tcp://127.0.0.1:3458\"%; s%^laddr = \"tcp://127.0.0.1:26657\"%laddr = \"tcp://127.0.0.1:3457\"%; s%^pprof_laddr = \"localhost:6060\"%pprof_laddr = \"localhost:3460\"%; s%^laddr = \"tcp://0.0.0.0:26656\"%laddr = \"tcp://0.0.0.0:3456\"%; s%^prometheus_listen_addr = \":26660\"%prometheus_listen_addr = \":3466\"%" $HOME/.artelad/config/config.toml
+    sed -i -e "s%^address = \"tcp://localhost:1317\"%address = \"tcp://0.0.0.0:3417\"%; s%^address = \":8080\"%address = \":3480\"%; s%^address = \"localhost:9090\"%address = \"0.0.0.0:3490\"%; s%^address = \"localhost:9091\"%address = \"0.0.0.0:3491\"%; s%:8545%:3445%; s%:8546%:3446%; s%:6065%:3465%" $HOME/.artelad/config/app.toml
     echo "export Artela_RPC_PORT=$node_address" >> $HOME/.bash_profile
     . $HOME/.bash_profile   
-
+    mv $HOME/.artelad $workDir/
+    ln -s $workDir/.artelad $HOME/
     pm2 start artelad -- start && pm2 save && pm2 startup
     
-    artelad tendermint unsafe-reset-all --home $projectName/.artelad --keep-addr-book
+    artelad tendermint unsafe-reset-all --home $workDir/.artelad --keep-addr-book
     echo "导入快照。。。。"
-    curl https://snapshots-testnet.nodejumper.io/artela-testnet/artela-testnet_latest.tar.lz4 | lz4 -dc - | tar -xf - -C $projectName/.artelad
+    curl https://snapshots-testnet.nodejumper.io/artela-testnet/artela-testnet_latest.tar.lz4 | lz4 -dc - | tar -xf - -C $workDir/.artelad
     #lz4 -dc artela-testnet_latest.tar.lz4 | tar -x -C $projectName/.artelad
   
 
