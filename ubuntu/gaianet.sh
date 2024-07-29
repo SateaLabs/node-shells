@@ -1,167 +1,167 @@
-Version="1.0.1"
+#!/bin/bash
+
+# 变量初始化
+projectName=${PRJECT_NAME-""}
+workDir="$HOME/satea/$projectName"
+dataDir="$HOME/satea/$projectName/data"
+
+ALL_SATEA_VARS=("projectName")
+
+mkdir -p $dataDir
+cd $workDir
 
 # 定义要检查的包列表
 packages=(
+    jq
     curl
     wget
 )
 
-# 检查并安装每个包
-function init() {
-    for pkg in "${packages[@]}"; do
-    if dpkg-query -W "$pkg" >/dev/null 2>&1; then
-        echo "$pkg installed,skip"
-    else
-        echo "install  $pkg..."
-        sudo apt update
-        sudo apt install -y "$pkg"
-    fi
-done
-}
-
-
-
-
-
-##显示需要接收的变量
-function VadVars(){
-     echo "$ALL_SATEA_VARS"
+function checkVars() {
+    # 循环遍历数组
+    for var_name in "${ALL_SATEA_VARS[@]}"; do
+        # 动态读取变量的值
+        value=$(eval echo \$$var_name)
+        if [ -z "$value" ]; then
+            # 如果为空，输出错误提示
+            echo "Error: Variable $var_name is not set!"
+            exit 1
+        else
+            # 如果不为空，输出变量名及其值
+            echo "Variable $var_name value is $value"
+        fi
+    done
 }
 
 #手动模式下 解析并填入变量的函数
-function Manual() {
-   >.env.sh
-   chmod +x .env.sh
-   for i in `echo $ALL_SATEA_VARS | tr ',' '\n' `;do
-
-   i_split=`echo $i |tr -d "{" | tr -d "}"`
-
-   read  -p "$i_split ="  i_split_vars
-
-   echo "$i_split=$i_split_vars" >>.env.sh
-
-  done
+function readVariables() {
+    >.env.sh
+    chmod +x .env.sh
+    for var_name in "${ALL_SATEA_VARS[@]}"; do
+        read -p "Please input $var_name: " read_value
+        echo "$var_name=$read_value" >>.env.sh
+    done
 }
 
+# 检查并安装每个包
+function checkPackages() {
+    echo "check packages ..."
+    for pkg in "${packages[@]}"; do
+        if dpkg-query -W "$pkg" >/dev/null 2>&1; then
+            echo "$pkg installed,skip"
+        else
+            echo "install  $pkg..."
+            sudo apt update
+            sudo apt install -y "$pkg"
+        fi
+    done
+}
 
-
-function install(){
+function install() {
      echo "install steps"
-     cd
      curl -sSfL 'https://github.com/GaiaNet-AI/gaianet-node/releases/latest/download/install.sh' | bash
      export PATH="$HOME/gaianet/bin:$PATH"
      gaianet init
      gaianet start
      gaianet info
-}    
-
-function nodeid(){
-     gaianet info
 }
 
-function clean(){
-     curl -sSfL 'https://github.com/GaiaNet-AI/gaianet-node/releases/latest/download/uninstall.sh' | bash
-     rm -rf $HOME/.wasmedge
-     rm -rf $HOME/gaianet
-     pkill -9 wasmedge
+function start() {
+    echo "start ..."
+    checkVars
+    gaianet start
 }
 
-function upgrade(){
-     curl -sSfL 'https://github.com/GaiaNet-AI/gaianet-node/releases/latest/download/install.sh' | bash -s -- --upgrade
-
+function stop() {
+    echo "stop ..."
+    gaianet stop
 }
 
-function stop(){
-     gaianet stop
+function upgrade() {
+    echo "upgrade ..."
+    curl -sSfL 'https://github.com/GaiaNet-AI/gaianet-node/releases/latest/download/install.sh' | bash -s -- --upgrade
+}
+
+function check() {
+    echo "check ..."
+    gaianet info
+}
+
+
+function clean() {
+    echo "clean ...."
+    curl -sSfL 'https://github.com/GaiaNet-AI/gaianet-node/releases/latest/download/uninstall.sh' | bash
+    gaianet stop
+    rm -rf $workDir
 }
 
 
 function About() {
-echo '   _____    ___       ______   ______   ___
-  / ___/   /   |     /_  __/  / ____/  /   |
-  \__ \   / /| |      / /    / __/    / /| |
- ___/ /  / ___ |     / /    / /___   / ___ |
-/____/  /_/  |_|    /_/    /_____/  /_/  |_|'
+    echo '   _____    ___     ______   ______   ___
+  / ___/   /   |   /_  __/  / ____/  /   |
+  \__ \   / /| |    / /    / __/    / /| |
+ ___/ /  / ___ |   / /    / /___   / ___ |
+/____/  /_/  |_|  /_/    /_____/  /_/  |_|'
 
-echo
-echo -e "\xF0\x9F\x9A\x80 Satea Node Installer
+    echo
+    echo -e "\xF0\x9F\x9A\x80 Satea Node Installer
 Website: https://www.satea.io/
 Twitter: https://x.com/SateaLabs
 Discord: https://discord.com/invite/satea
 Gitbook: https://satea.gitbook.io/satea
-Version: $Version
+Version: V1.0.0
 Introduction: Satea is a DePINFI aggregator dedicated to breaking down the traditional barriers that limits access to computing resources.  "
-echo""
+    echo""
 }
 
-
-
-
-
 case $1 in
-
+check-packages)
+    checkPackages
+    ;;
 install)
-
-  if [ "$2" = "--auto" ]
-  then
-     echo "-> Automatic mode, please ensure that ALL SATEA_VARS(`VadVars`) have been replaced !"
-          sleep 3
-
-     #这里使用自动模式下的 安装 函数
-     install
-
+    if [ "$2" = "--auto" ]; then
+        #这里使用自动模式下的 安装 函数
+        install
     else
-      echo "Unrecognized variable(`VadVars`) being replaced, manual mode"
-
-      #手动模式 使用Manual 获取用户输入的变量
-
-      Manual      #获取用户输入的变量
-      . .env.sh   #导入变量
-
-      #其他安装函数
-      install
-
-
+        #手动模式 使用Manual 获取用户输入的变量
+        readVariables #获取用户输入的变量
+        . .env.sh     #导入变量
+        #其他安装函数
+        install
     fi
-  ;;
-
-vars)
- #展示变量
-VadVars
-
-  ;;
-
-clean)
-clean
-  ;;
-
+    ;;
+start)
+    #创建启动节点的函数
+    start
+    ;;
 stop)
-stop
-
-  ;;
-
+    #创建停止节点的函数
+    stop
+    ;;
 upgrade)
-upgrade
-
-  ;;
-
-nodeid)
-nodeid
-  ;;
-init)
-init
-  ;;
+    #创建升级节点的函数
+    upgrade
+    ;;
+check)
+    #创建一些用于检查节点的函数
+    check
+    ;;
+clean)
+    #创建清除节点的函数
+    clean
+    ;;
 
 **)
 
- #定义帮助信息 例子
- About
-  echo "Flag:
-  install              Install gaianet with manual mode,  If carrying the --auto parameter, start Automatic mode
-  init                 Install Dependent packages
-  stop                 Stop all gaianet
-  nodeid               show your node_id
-  upgrade              Upgrade an existing installation of gaianet
-  clean                Remove the gaianet from your server"
-  ;;
+    #定义帮助信息 例子
+    About
+    echo "Flag:
+  check-packages       Check basic installation package
+  install              Install $projectName environment
+  start                Start the $projectName service
+  stop                 Stop the $projectName service
+  upgrade              Upgrade an existing installation of $projectName
+  check                Check $projectName service status
+  clean                Remove the $projectName from your service, remove data!!! "
+    ;;
 esac
