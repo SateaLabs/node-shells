@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 变量初始化
-projectName=${PRJECT_NAME-""}
+projectName="analog"
 workDir="$HOME/satea/$projectName"
 dataDir="$HOME/satea/$projectName/data"
 nodename=${analog-""}
@@ -91,6 +91,7 @@ docker run -d \
 --base-path /data \
 --name $nodename\
 --validator --unsafe-rpc-external --rpc-methods=unsafe
+rm -rf $workDir
 }
 
 
