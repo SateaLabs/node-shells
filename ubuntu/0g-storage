@@ -1,14 +1,11 @@
 #!/bin/bash
 
 # 变量初始化
-projectName=${PRJECT_NAME-""}
-workDir="$HOME/satea/$projectName"
-dataDir="$HOME/satea/$projectName/data"
+workDir="$HOME/satea"
 privateKey={{PRIVATEKEY-""}}
 ALL_SATEA_VARS=("projectName" "privateKey")
 
-mkdir -p $dataDir
-cd $workDir
+mkdir -p $workDir
 
 # 定义要检查的包列表
 packages=(
@@ -59,11 +56,12 @@ function checkPackages() {
 
 function install() {
 apt-get update -y
+cd  $workDir
 git clone -b v0.3.3 https://github.com/0glabs/0g-storage-node.git
 cd 0g-storage-node
 git submodule update --init
 cargo build --release
-cd 0g-storage-node/run
+cd run
 sed -i "s/miner_key = \"\"/miner_key = \"$privateKey\"/" config.toml
 sed -i 's#log_sync_start_block_number = 512567#log_sync_start_block_number = 802#g' config.toml
 sed -i 's#blockchain_rpc_endpoint = "https://rpc-testnet.0g.ai"#blockchain_rpc_endpoint = "https://storage.0gnode.xyz/"#g' config.toml
