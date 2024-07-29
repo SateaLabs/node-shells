@@ -5,7 +5,7 @@ projectName=${PRJECT_NAME-""}
 workDir="$HOME/satea/$projectName"
 dataDir="$HOME/satea/$projectName/data"
 moniker=${MONIKER-""}
-walletName=${WALLET_NAME-"wallet"}
+walletName=${WALLET_NAME-""}
 ALL_SATEA_VARS=("projectName" "moniker" "walletName")
 
 mkdir -p $dataDir
