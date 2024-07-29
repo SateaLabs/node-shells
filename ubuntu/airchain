@@ -7,7 +7,7 @@ dataDir="$HOME/satea/$projectName/data"
 walletName=${WALLET_NAME-""}
 moniker=${MONIKER-""}
 password=${PASSWD-""}
-ALL_SATEA_VARS=("projectName,wallet")
+ALL_SATEA_VARS=("projectName" "wallet" "moniker")
 
 mkdir -p $dataDir
 cd $workDir
