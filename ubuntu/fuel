@@ -1,13 +1,12 @@
 #!/bin/bash
 
 # 变量初始化
-projectName=${PRJECT_NAME-"fuel"}
-workDir="$HOME/satea/$projectName"
-dataDir="$HOME/satea/$projectName/data"
+projectName=fuel
+workDir="$HOME/satea/fuel"
 moniker=${MONIKER-""}
 ALL_SATEA_VARS=("projectName" "moniker")
 
-mkdir -p $dataDir
+mkdir -p $workDir
 cd $workDir
 
 # 定义要检查的包列表
@@ -58,6 +57,7 @@ function checkPackages() {
 }
 
 function install() {
+cd $workDir
 /usr/bin/expect <<EOF
 spawn sh -c {curl https://install.fuel.network | sh}
 expect {
