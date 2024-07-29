@@ -2,12 +2,11 @@
 
 # 变量初始化
 projectName="artela"
-workDir="$HOME/satea"
-dataDir="$HOME/satea/$projectName/data"
+workDir="$HOME/satea/$projectName"
 moniker=${MONIKER-""}
 walletName=${WALLET_NAME-""}
 ALL_SATEA_VARS=("moniker" "walletName")
-mkdir $workDir
+mkdir -p $workDir
 # 定义要检查的包列表
 packages=(
     jq
@@ -57,19 +56,11 @@ function checkPackages() {
 
 function install() {
     cd $workDir
-    mkdir data
     pwd
-    git clone https://github.com/artela-network/artela
-    cd artela
-    git checkout v0.4.7-rc7-fix-execution 
-    make install
     wget https://github.com/artela-network/artela/releases/download/v0.4.8-rc8/artelad_0.4.8_rc8_Linux_amd64.tar.gz
     tar -xvf artelad_0.4.8_rc8_Linux_amd64.tar.gz
     mkdir libs
-    mv $workDir/artela/libaspect_wasm_instrument.so $workDir/artela/libs/
-    mv $workDir/artela/artelad /usr/local/bin/
-    echo 'export LD_LIBRARY_PATH=$workDir/artela/libs:$LD_LIBRARY_PATH' >> $HOME/.bash_profile
-    . $HOME/.bash_profile
+    mv $workDir/artelad /usr/local/bin/
     artelad config chain-id artela_11822-1
     artelad init "$moniker" --chain-id artela_11822-1
     artelad config node tcp://localhost:3457
@@ -95,7 +86,7 @@ function install() {
     
     artelad tendermint unsafe-reset-all --home $workDir/.artelad --keep-addr-book
     echo "导入快照。。。。"
-    curl https://snapshots-testnet.nodejumper.io/artela-testnet/artela-testnet_latest.tar.lz4 | lz4 -dc - | tar -xf - -C $workDir/.artelad
+    #curl https://snapshots-testnet.nodejumper.io/artela-testnet/artela-testnet_latest.tar.lz4 | lz4 -dc - | tar -xf - -C $workDir/.artelad
     #lz4 -dc artela-testnet_latest.tar.lz4 | tar -x -C $projectName/.artelad
   
 
@@ -152,9 +143,12 @@ function stop() {
 }
 
 function clean() {
+    projectName="artela"
+    workDir="$HOME/satea/$projectName"
     echo "clean ...."
     pm2 stop artelad && pm2 delete artelad && pm2 save 
     rm -rf $workDir
+    rm -rf $HOME/.artelad
 }
 
 function logs() {
