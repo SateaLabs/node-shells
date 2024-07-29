@@ -5,7 +5,7 @@ projectName=${PRJECT_NAME-""}
 workDir="$HOME/satea/$projectName"
 dataDir="$HOME/satea/$projectName/data"
 privateKey={{PRIVATEKEY-""}}
-ALL_SATEA_VARS=("projectName","privateKey")
+ALL_SATEA_VARS=("projectName" "privateKey")
 
 mkdir -p $dataDir
 cd $workDir
