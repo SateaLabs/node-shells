@@ -1,15 +1,14 @@
 #!/bin/bash
 
 # 变量初始化
-projectName=${PRJECT_NAME-""}
+projectName="airchain"
 workDir="$HOME/satea/$projectName"
-dataDir="$HOME/satea/$projectName/data"
 walletName=${WALLET_NAME-""}
 moniker=${MONIKER-""}
 password=${PASSWD-""}
 ALL_SATEA_VARS=("projectName" "wallet" "moniker")
 
-mkdir -p $dataDir
+mkdir -p $workDir
 cd $workDir
 
 # 定义要检查的包列表
@@ -60,6 +59,7 @@ function checkPackages() {
 }
 
 function install() {
+    cd $workDir
     git clone https://github.com/airchains-network/wasm-station.git
     git clone https://github.com/airchains-network/tracks.git
     cd wasm-station
@@ -103,8 +103,8 @@ else
     echo "$password" | eigenlayer operator keys create --key-type ecdsa --insecure $walletName 2>&1 | tee $workDir/eigenlayer.txt
 fi
 cp $workDir/eigenlayer.txt $workDir/eigenlayer.txt.bk
-sudo rm -rf ~/.tracks
-cd $HOME/tracks
+rm -rf ~/.tracks
+cd $workDir/tracks
 go mod tidy
 #!/bin/bash
 
