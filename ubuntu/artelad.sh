@@ -60,14 +60,14 @@ function checkPackages() {
 
 function install() {
     git clone https://github.com/artela-network/artela
-    cd artela
+    cd $workDir/artela
     git checkout v0.4.7-rc7-fix-execution 
     make install
     wget https://github.com/artela-network/artela/releases/download/v0.4.7-rc7-fix-execution/artelad_0.4.7_rc7_fix_execution_Linux_amd64.tar.gz
     tar -xvf artelad_0.4.7_rc7_fix_execution_Linux_amd64.tar.gz
     mkdir libs
-    mv $HOME/libaspect_wasm_instrument.so $HOME/libs/
-    mv $HOME/artelad /usr/local/bin/
+    mv $workDir/artela/libaspect_wasm_instrument.so $workDir/artela/libs/
+    mv $workDir/artela/artelad /usr/local/bin/
     echo 'export LD_LIBRARY_PATH=$HOME/libs:$LD_LIBRARY_PATH' >> $HOME/.bash_profile
     . $HOME/.bash_profile
     artelad config chain-id artela_11822-1
