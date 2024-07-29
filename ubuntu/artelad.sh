@@ -63,8 +63,8 @@ function install() {
     cd artela
     git checkout v0.4.7-rc7-fix-execution 
     make install
-    wget https://github.com/artela-network/artela/releases/download/v0.4.7-rc7-fix-execution/artelad_0.4.7_rc7_fix_execution_Linux_amd64.tar.gz
-    tar -xvf artelad_0.4.7_rc7_fix_execution_Linux_amd64.tar.gz
+    wget https://github.com/artela-network/artela/releases/download/v0.4.8-rc8/artelad_0.4.8_rc8_Linux_amd64.tar.gz
+    tar -xvf artelad_0.4.8_rc8_Linux_amd64.tar.gz
     mkdir libs
     mv $workDir/artela/libaspect_wasm_instrument.so $workDir/artela/libs/
     mv $workDir/artela/artelad /usr/local/bin/
