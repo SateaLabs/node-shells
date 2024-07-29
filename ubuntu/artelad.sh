@@ -60,7 +60,6 @@ function checkPackages() {
 
 function install() {
     git clone https://github.com/artela-network/artela
-    cd $workDir/artela
     git checkout v0.4.7-rc7-fix-execution 
     make install
     wget https://github.com/artela-network/artela/releases/download/v0.4.7-rc7-fix-execution/artelad_0.4.7_rc7_fix_execution_Linux_amd64.tar.gz
