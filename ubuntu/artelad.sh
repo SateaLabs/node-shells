@@ -69,7 +69,7 @@ function install() {
     source ~/.bash_profile
     #wget https://github.com/artela-network/artela/releases/download/v0.4.8-rc8/artelad_0.4.8_rc8_Linux_amd64.tar.gz
     #tar -xvf artelad_0.4.8_rc8_Linux_amd64.tar.gz
-    mv $workDir/artelad /usr/local/bin/
+    #mv $workDir/artelad /usr/local/bin/
     artelad config chain-id artela_11822-1
     artelad init "$moniker" --chain-id artela_11822-1
     artelad config node tcp://localhost:3457
