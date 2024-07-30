@@ -4,6 +4,7 @@
 projectName=fuel
 workDir="$HOME/satea/fuel"
 moniker=${MONIKER-""}
+rpckey=${RPCKEY-""}
 ALL_SATEA_VARS=("projectName" "moniker")
 
 mkdir -p $workDir
