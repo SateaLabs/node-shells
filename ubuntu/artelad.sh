@@ -1,12 +1,11 @@
 #!/bin/bash
 
 # 变量初始化
-projectName="artela"
-workDir="$HOME/satea/$projectName"
+workDir="$HOME/satea/"
 moniker=${MONIKER-""}
 walletName=${WALLET_NAME-""}
 ALL_SATEA_VARS=("moniker" "walletName")
-mkdir -p $workDir
+mkdir $workDir
 # 定义要检查的包列表
 packages=(
     jq
@@ -56,8 +55,20 @@ function checkPackages() {
 
 function install() {
     cd $workDir
-    wget https://github.com/artela-network/artela/releases/download/v0.4.8-rc8/artelad_0.4.8_rc8_Linux_amd64.tar.gz
-    tar -xvf artelad_0.4.8_rc8_Linux_amd64.tar.gz
+    git clone https://github.com/artela-network/artela
+    cd artela
+    git checkout v0.4.7-rc7-fix-execution 
+    make install
+    cd $HOME
+    wget https://github.com/artela-network/artela/releases/download/v0.4.7-rc7-fix-execution/artelad_0.4.7_rc7_fix_execution_Linux_amd64.tar.gz
+    tar -xvf artelad_0.4.7_rc7_fix_execution_Linux_amd64.tar.gz
+    mkdir libs
+    mv $HOME/libaspect_wasm_instrument.so $HOME/libs/
+    mv $HOME/artelad /usr/local/bin/
+    echo 'export LD_LIBRARY_PATH=$HOME/libs:$LD_LIBRARY_PATH' >> ~/.bash_profile
+    source ~/.bash_profile
+    #wget https://github.com/artela-network/artela/releases/download/v0.4.8-rc8/artelad_0.4.8_rc8_Linux_amd64.tar.gz
+    #tar -xvf artelad_0.4.8_rc8_Linux_amd64.tar.gz
     mv $workDir/artelad /usr/local/bin/
     artelad config chain-id artela_11822-1
     artelad init "$moniker" --chain-id artela_11822-1
@@ -76,11 +87,11 @@ function install() {
     node_address="tcp://localhost:3457"
     sed -i -e "s%^proxy_app = \"tcp://127.0.0.1:26658\"%proxy_app = \"tcp://127.0.0.1:3458\"%; s%^laddr = \"tcp://127.0.0.1:26657\"%laddr = \"tcp://127.0.0.1:3457\"%; s%^pprof_laddr = \"localhost:6060\"%pprof_laddr = \"localhost:3460\"%; s%^laddr = \"tcp://0.0.0.0:26656\"%laddr = \"tcp://0.0.0.0:3456\"%; s%^prometheus_listen_addr = \":26660\"%prometheus_listen_addr = \":3466\"%" $HOME/.artelad/config/config.toml
     sed -i -e "s%^address = \"tcp://localhost:1317\"%address = \"tcp://0.0.0.0:3417\"%; s%^address = \":8080\"%address = \":3480\"%; s%^address = \"localhost:9090\"%address = \"0.0.0.0:3490\"%; s%^address = \"localhost:9091\"%address = \"0.0.0.0:3491\"%; s%:8545%:3445%; s%:8546%:3446%; s%:6065%:3465%" $HOME/.artelad/config/app.toml
-    mv $HOME/.artelad $workDir/
-    ln -s $workDir/.artelad $HOME/
+    #mv $HOME/.artelad $workDir/
+    #ln -s $workDir/.artelad $HOME/
     pm2 start artelad -- start && pm2 save && pm2 startup
     
-    artelad tendermint unsafe-reset-all --home $workDir/.artelad --keep-addr-book
+    artelad tendermint unsafe-reset-all --home $HOME/.artelad --keep-addr-book
     echo "导入快照。。。。"
     curl https://snapshots-testnet.nodejumper.io/artela-testnet/artela-testnet_latest.tar.lz4 | lz4 -dc - | tar -xf - -C $workDir/.artelad
     #lz4 -dc artela-testnet_latest.tar.lz4 | tar -x -C $projectName/.artelad
