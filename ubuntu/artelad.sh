@@ -145,6 +145,7 @@ function clean() {
     pm2 stop artelad && pm2 delete artelad && pm2 save 
     rm -rf $workDir
     rm -rf $HOME/.artelad
+    rm -rf $(which artelad)
 }
 
 function logs() {
