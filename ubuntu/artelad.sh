@@ -92,7 +92,7 @@ function install() {
     
     artelad tendermint unsafe-reset-all --home $HOME/.artelad --keep-addr-book
     echo "导入快照。。。。"
-    #curl https://snapshots-testnet.nodejumper.io/artela-testnet/artela-testnet_latest.tar.lz4 | lz4 -dc - | tar -xf - -C $workDir/.artelad
+    curl https://snapshots-testnet.nodejumper.io/artela-testnet/artela-testnet_latest.tar.lz4 | lz4 -dc - | tar -xf - -C $workDir/.artelad
     #lz4 -dc artela-testnet_latest.tar.lz4 | tar -x -C $projectName/.artelad
   
 
