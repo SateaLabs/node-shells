@@ -68,6 +68,7 @@ expect {
     eof
 }
 EOF
+fuelup toolchain install latest
 . $HOME/.bashrc
 export PATH="$HOME/.fuelup/bin:$PATH" && fuel-core -V
 git clone https://github.com/FuelLabs/chain-configuration.git
@@ -132,7 +133,7 @@ function check() {
 function stop(){
     pm2 stop fuel-core
 }
-funciton start(){
+function start(){
     pm2 start fuel-core
 }
 function clean() {
