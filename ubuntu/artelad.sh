@@ -69,7 +69,6 @@ function install() {
     source ~/.bash_profile
     #wget https://github.com/artela-network/artela/releases/download/v0.4.8-rc8/artelad_0.4.8_rc8_Linux_amd64.tar.gz
     #tar -xvf artelad_0.4.8_rc8_Linux_amd64.tar.gz
-    #mv $workDir/artelad /usr/local/bin/
     artelad config chain-id artela_11822-1
     artelad init "$moniker" --chain-id artela_11822-1
     artelad config node tcp://localhost:3457
@@ -93,11 +92,11 @@ function install() {
     
     artelad tendermint unsafe-reset-all --home $HOME/.artelad --keep-addr-book
     echo "导入快照。。。。"
-    curl https://snapshots-testnet.nodejumper.io/artela-testnet/artela-testnet_latest.tar.lz4 | lz4 -dc - | tar -xf - -C $workDir/.artelad
+    #curl https://snapshots-testnet.nodejumper.io/artela-testnet/artela-testnet_latest.tar.lz4 | lz4 -dc - | tar -xf - -C $workDir/.artelad
     #lz4 -dc artela-testnet_latest.tar.lz4 | tar -x -C $projectName/.artelad
   
 
-     pm2 restart artelad
+     #pm2 restart artelad
 
 }
 
