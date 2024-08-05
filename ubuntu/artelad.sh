@@ -96,7 +96,7 @@ function install() {
     #lz4 -dc artela-testnet_latest.tar.lz4 | tar -x -C $projectName/.artelad
   
 
-     #pm2 restart artelad
+     pm2 restart artelad
 
 }
 
